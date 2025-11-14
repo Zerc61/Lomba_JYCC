@@ -13,11 +13,15 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
-            $table->rememberToken();
+            $table->string('username', 30);
+            $table->string('name', 30);
+            $table->string('password', 100);
+            $table->string('email', 50)->unique();
+            $table->string('no_telpon', 15)->nullable();
+            $table->decimal('saldo_rupiah', 15,2)->default(0);
+            $table->decimal('saldo_emas', 15,2)->default(0);
+            $table->decimal('saldo_dcoin', 15,2)->default(0);
+            $table->enum('role', ['admin', 'user', 'umkm', 'driver'])->default('user');
             $table->timestamps();
         });
 
