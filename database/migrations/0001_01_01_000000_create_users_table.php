@@ -18,9 +18,6 @@ return new class extends Migration
             $table->string('password', 100);
             $table->string('email', 50)->unique();
             $table->string('no_telpon', 15)->nullable();
-            $table->decimal('saldo_rupiah', 15,2)->default(0);
-            $table->decimal('saldo_emas', 15,2)->default(0);
-            $table->decimal('saldo_dcoin', 15,2)->default(0);
             $table->enum('role', ['admin', 'user', 'umkm', 'driver'])->default('user');
             $table->timestamps();
         });
