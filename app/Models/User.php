@@ -25,9 +25,6 @@ class User extends Authenticatable
     'password',
     'no_telpon',
     'role',
-    'saldo_rupiah',
-    'saldo_emas',
-    'saldo_dcoin'
 ];
 
     /**
