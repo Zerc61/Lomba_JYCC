@@ -8,9 +8,6 @@ use Illuminate\Support\Facades\Hash;
 
 class TopupController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
         $topup = Topup::latest()->paginate(10);
@@ -21,9 +18,6 @@ class TopupController extends Controller
         ];
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $request->validate([
@@ -40,7 +34,7 @@ class TopupController extends Controller
         $topup = Topup::create([
             'name' => $request->name,
             'email' => $request->email,
-            'password' => Hash::make($request->password),   // HASH PASSWORD
+            'password' => Hash::make($request->password),
             'no_telpon' => $request->no_telpon,
             'role' => $request->role ?? 'user',
             'saldo_rupiah' => $request->saldo_rupiah ?? 0,
@@ -55,9 +49,6 @@ class TopupController extends Controller
         ];
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(Topup $topup)
     {
         return [
@@ -66,16 +57,13 @@ class TopupController extends Controller
         ];
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, Topup $topup)
     {
         $request->validate([
             'name' => 'required|max:20',
-            'email' => 'required|email|unique:topups,email,' . $topup->id,
+            'email' => 'required|email|unique:topups,email,' . $topup->id_topup . ',id_topup',
             'password' => 'nullable|min:6',
-            'no_telpon' => 'required|max:20|unique:topups,no_telpon,' . $topup->id,
+            'no_telpon' => 'required|max:20|unique:topups,no_telpon,' . $topup->id_topup . ',id_topup',
             'role' => 'in:admin,user,umkm,driver',
             'saldo_rupiah' => 'numeric',
             'saldo_emas' => 'numeric',
@@ -87,7 +75,6 @@ class TopupController extends Controller
         $topup->no_telpon = $request->no_telpon;
         $topup->role = $request->role;
 
-        // JIKA PASSWORD DIUPDATE, HASH ULANG
         if ($request->password) {
             $topup->password = Hash::make($request->password);
         }
@@ -105,9 +92,55 @@ class TopupController extends Controller
         ];
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+    public function patch(Request $request, Topup $topup)
+    {
+        $rules = [];
+
+        if ($request->has('name')) {
+            $rules['name'] = 'max:20';
+        }
+
+        if ($request->has('email')) {
+            $rules['email'] = 'email|unique:topups,email,' 
+                . $topup->id_topup . ',id_topup';
+        }
+
+        if ($request->has('password')) {
+            $rules['password'] = 'min:6';
+        }
+
+        if ($request->has('no_telpon')) {
+            $rules['no_telpon'] = 'max:20|unique:topups,no_telpon,' 
+                . $topup->id_topup . ',id_topup';
+        }
+
+        if ($request->has('role')) {
+            $rules['role'] = 'in:admin,user,umkm,driver';
+        }
+
+        if ($request->has('saldo_rupiah')) $rules['saldo_rupiah'] = 'numeric';
+        if ($request->has('saldo_emas')) $rules['saldo_emas'] = 'numeric';
+        if ($request->has('saldo_dcoin')) $rules['saldo_dcoin'] = 'numeric';
+
+        $request->validate($rules);
+
+        foreach ($request->only(array_keys($rules)) as $key => $value) {
+            if ($key === 'password') {
+                $topup->password = Hash::make($value);
+            } else {
+                $topup->$key = $value;
+            }
+        }
+
+        $topup->save();
+
+        return [
+            "status" => 1,
+            "data" => $topup,
+            "msg" => "topup partially updated successfully"
+        ];
+    }
+
     public function destroy(Topup $topup)
     {
         $topup->delete();

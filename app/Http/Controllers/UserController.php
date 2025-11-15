@@ -8,9 +8,6 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
         $user = User::latest()->paginate(10);
@@ -21,18 +18,14 @@ class UserController extends Controller
         ];
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $request->validate([
-            'username' => 'required|string|min:3|max:20',
+            'username' => 'required|string|min:3|max:20|unique:users,username',
             'name' => 'required|string|max:30',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|min:6',
-          ]);
-
+        ]);
 
         $user = User::create([
             'username' => $request->username,
@@ -41,19 +34,12 @@ class UserController extends Controller
             'password' => Hash::make($request->password)
         ]);
 
-        $token = $user->createToken('auth_token')->plainTextToken;
-
         return [
             "status" => 1,
-            "data" => $user,
-            "token" => $token,
-            "token_type" => "bearer"
+            "data" => $user
         ];
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(User $user)
     {
         return [
@@ -62,45 +48,41 @@ class UserController extends Controller
         ];
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, User $user)
-    {
-        $request->validate([
-           'username' => 'required|max:20',
-           'name' =>'required',
-           'email' => 'required|email|unique|users,emaii,' .$user->id,
-           'password' => 'nullable|min:6',
-        ]);
+{
+    $request->validate([
+        'username' => 'required|string|max:20|unique:users,username,' . $user->id_user . ',id_user',
+        'name' => 'required|string|max:30',
+        'email' => 'required|email|unique:users,email,' . $user->id_user . ',id_user',
+        'password' => 'nullable|min:6'
+    ]);
 
-        $user->username = $request->username;
-        $user->name = $request->name;
-        $user->email = $request->email;
+    $user->username = $request->username;
+    $user->name = $request->name;
+    $user->email = $request->email;
 
-        if($request->password) {
-            $user->password = Hash::make($request->password);
-        }
-
-        $user -> save();
-
-        return [
-            "status" => 1,
-            "data" => $user,
-            "msg" => "user update succesfully"
-        ];
+    if ($request->password) {
+        $user->password = Hash::make($request->password);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+    $user->save();
+
+    return [
+        "status" => 1,
+        "data" => $user,
+        "msg" => "User updated successfully"
+    ];
+}
+
+
     public function destroy(User $user)
     {
-        $user -> delete();
+        $user->delete();
+
         return [
             "status" => 1,
             "data" => $user,
-            "msg" => "user delete success"
+            "msg" => "User deleted successfully"
         ];
     }
 
@@ -131,6 +113,57 @@ class UserController extends Controller
         ], 200);
 
         
+    }
+
+        public function patch(Request $request, User $user)
+    {
+        // Rules dinamis berdasarkan field yang dikirim
+        $rules = [];
+
+        if ($request->has('username')) {
+            $rules['username'] = 'string|min:3|max:20|unique:users,username,' . $user->id_user . ',id_user';
+        }
+
+        if ($request->has('name')) {
+            $rules['name'] = 'string|max:30';
+        }
+
+        if ($request->has('email')) {
+            $rules['email'] = 'email|unique:users,email,' . $user->id_user . ',id_user';
+        }
+
+        if ($request->has('password')) {
+            $rules['password'] = 'min:6';
+        }
+
+        if ($request->has('no_telpon')) {
+            $rules['no_telpon'] = 'max:15';
+        }
+
+        if ($request->has('role')) {
+            $rules['role'] = 'in:admin,user,umkm,driver';
+        }
+
+        // Validasi field yang dikirim
+        $request->validate($rules);
+
+        // Update field yang dikirim saja
+        foreach ($request->only(array_keys($rules)) as $key => $value) {
+            if ($key === 'password') {
+                $user->password = Hash::make($value);
+            } else {
+                $user->$key = $value;
+            }
+        }
+
+        // Simpan perubahan
+        $user->save();
+
+        return [
+            "status" => 1,
+            "data" => $user,
+            "msg" => "User partially updated successfully"
+        ];
     }
 
     public function logout(Request $request) {

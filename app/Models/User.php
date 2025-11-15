@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -10,27 +9,37 @@ use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasApiTokens, HasFactory, Notifiable;
 
     /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
+     * Primary key custom.
      */
-    protected $fillable = [
-    'username',
-    'name',
-    'email',
-    'password',
-    'no_telpon',
-    'role',
-];
+    protected $primaryKey = 'id_user';
 
     /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
+     * Primary key bukan increment default 'id'
+     */
+    public $incrementing = true;
+
+    /**
+     * Tipe data primary key (wajib BIGINT).
+     */
+    protected $keyType = 'int';
+
+    /**
+     * Mass assignable attributes.
+     */
+    protected $fillable = [
+        'username',
+        'name',
+        'email',
+        'password',
+        'no_telpon',
+        'role',
+    ];
+
+    /**
+     * Attributes that should be hidden.
      */
     protected $hidden = [
         'password',
@@ -38,9 +47,7 @@ class User extends Authenticatable
     ];
 
     /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
+     * Casts.
      */
     protected function casts(): array
     {

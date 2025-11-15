@@ -13,6 +13,8 @@ class Topup extends Model
 
      protected $table = 'topups';
 
+      protected $primaryKey = 'id_topup';
+
     protected $fillable = [
         'name',
         'email',
@@ -24,5 +26,7 @@ class Topup extends Model
         'saldo_dcoin'
     ];
 
-    protected $hidden = ['password'];
+    protected $hidden = [
+        'password',
+    ];
 }

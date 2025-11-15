@@ -9,6 +9,7 @@ Route::get('/users', [UserController::class, 'index']);
 Route::post('/users', [UserController::class, 'store']);
 Route::get('/users/{user}', [UserController::class, 'show']);
 Route::put('/users/{user}', [UserController::class, 'update']);
+Route::patch('/users/{user}', [UserController::class, 'patch']); // partial update
 Route::delete('/users/{user}', [UserController::class, 'destroy']);
 
 Route::post('/login', [UserController::class, 'login']);
@@ -25,9 +26,10 @@ Route::middleware('auth:sanctum')->group(function() {
 
 //api TOPUP
 
-Route::get('/topup', [TopupController::class, 'index']);
-Route::post('/topup', [TopupController::class, 'store']);
-Route::get('/topup/{topup}', [TopupController::class, 'show']);
-Route::put('/topup/{topup}', [TopupController::class, 'update']);
-Route::delete('/topup/{topup}', [TopupController::class, 'destroy']);
+Route::get('/topups', [TopupController::class, 'index']);
+Route::get('/topups/{topup}', [TopupController::class, 'show']);
+Route::post('/topups', [TopupController::class, 'store']);
+Route::put('/topups/{topup}', [TopupController::class, 'update']); // full update
+Route::patch('/topups/{topup}', [TopupController::class, 'patch']); // partial update
+Route::delete('/topups/{topup}', [TopupController::class, 'destroy']);
 
