@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Request;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\TopupController;
 
 Route::get('/users', [UserController::class, 'index']);
 Route::post('/users', [UserController::class, 'store']);
@@ -19,5 +20,14 @@ Route::get('/test', function () {
 //ALTER TABLE users AUTO_INCREMENT = 1
 
 Route::middleware('auth:sanctum')->group(function() {
-    Route::post('logout', [UserController::class, 'logout']);
+    Route::post('/logout', [UserController::class, 'logout']);
 });
+
+//api TOPUP
+
+Route::get('/topup', [TopupController::class, 'index']);
+Route::post('/topup', [TopupController::class, 'store']);
+Route::get('/topup/{topup}', [TopupController::class, 'show']);
+Route::put('/topup/{topup}', [TopupController::class, 'update']);
+Route::delete('/topup/{topup}', [TopupController::class, 'destroy']);
+

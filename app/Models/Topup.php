@@ -23,4 +23,6 @@ class Topup extends Model
         'saldo_emas',
         'saldo_dcoin'
     ];
+
+    protected $hidden = ['password'];
 }

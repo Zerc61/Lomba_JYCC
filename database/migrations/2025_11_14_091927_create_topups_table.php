@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name', 20);
             $table->string('email', 40)->unique();
-            $table->string('password', 50);
+            $table->string('password');
             $table->string('no_telpon', 20)->unique();
             $table->enum('role', ['admin', 'user', 'umkm', 'driver'])->default('user');
             $table->decimal('saldo_rupiah', 15, 2)->default(0);
