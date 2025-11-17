@@ -13,15 +13,16 @@ return new class extends Migration
     {
         Schema::create('wisatas', function (Blueprint $table) {
             $table->id('id_wisata');
-            $table->string('name_wisata', 30);
+            $table->string('nama_wisata', 30); // FIX
             $table->string('alamat_wisata', 30);
-            $table->text('infotmasi_wisata');
-            $table->decimal('biaya_wisata',10,2);
+            $table->text('informasi_wisata'); // FIX typo
+            $table->decimal('biaya_wisata', 10, 2);
             $table->string('kategori', 30);
             $table->binary('foto_wisata')->nullable();
             $table->string('lokasi', 30);
             $table->timestamps();
-        });
+});
+
     }
 
     /**
