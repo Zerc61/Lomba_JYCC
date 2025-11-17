@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Request;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\TopupController;
 use App\Http\Controllers\WisataController;
-use App\Models\Wisata;
+use App\Http\Controllers\UmkmController;
 
 Route::get('/users', [UserController::class, 'index']);
 Route::post('/users', [UserController::class, 'store']);
@@ -41,3 +41,5 @@ Route::get('/wisatas', [WisataController::class, 'index']);
 Route::post('/wisatas', [WisataController::class, 'store']);
 
 
+// Api UMKM
+Route::get('/umkms', [UmkmController::class, 'index']);
