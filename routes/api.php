@@ -4,6 +4,8 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Request;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\TopupController;
+use App\Http\Controllers\WisataController;
+use App\Models\Wisata;
 
 Route::get('/users', [UserController::class, 'index']);
 Route::post('/users', [UserController::class, 'store']);
@@ -32,4 +34,8 @@ Route::post('/topups', [TopupController::class, 'store']);
 Route::put('/topups/{topup}', [TopupController::class, 'update']); // full update
 Route::patch('/topups/{topup}', [TopupController::class, 'patch']); // partial update
 Route::delete('/topups/{topup}', [TopupController::class, 'destroy']);
+
+//api WISATA
+
+Route::get('/wisatas', [WisataController::class, 'index']);
 
