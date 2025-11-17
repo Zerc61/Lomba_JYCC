@@ -1,17 +1,17 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Request;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\TopupController;
 use App\Http\Controllers\WisataController;
 use App\Http\Controllers\UmkmController;
 
+// USER
 Route::get('/users', [UserController::class, 'index']);
 Route::post('/users', [UserController::class, 'store']);
 Route::get('/users/{user}', [UserController::class, 'show']);
 Route::put('/users/{user}', [UserController::class, 'update']);
-Route::patch('/users/{user}', [UserController::class, 'patch']); // partial update
+Route::patch('/users/{user}', [UserController::class, 'patch']);
 Route::delete('/users/{user}', [UserController::class, 'destroy']);
 
 Route::post('/login', [UserController::class, 'login']);
@@ -20,26 +20,24 @@ Route::get('/test', function () {
     return response()->json(['message' => 'API berjalan']);
 });
 
-//ALTER TABLE users AUTO_INCREMENT = 1
-
-Route::middleware('auth:sanctum')->group(function() {
+// Sanctum Protected
+Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [UserController::class, 'logout']);
 });
 
-//api TOPUP
-
+// TOPUP
 Route::get('/topups', [TopupController::class, 'index']);
-Route::get('/topups/{topup}', [TopupController::class, 'show']);
 Route::post('/topups', [TopupController::class, 'store']);
-Route::put('/topups/{topup}', [TopupController::class, 'update']); // full update
-Route::patch('/topups/{topup}', [TopupController::class, 'patch']); // partial update
+Route::get('/topups/{topup}', [TopupController::class, 'show']);
+Route::put('/topups/{topup}', [TopupController::class, 'update']);
+Route::patch('/topups/{topup}', [TopupController::class, 'patch']);
 Route::delete('/topups/{topup}', [TopupController::class, 'destroy']);
 
-//api WISATA
-
+// WISATA
 Route::get('/wisatas', [WisataController::class, 'index']);
 Route::post('/wisatas', [WisataController::class, 'store']);
 
-
-// Api UMKM
+// UMKM
 Route::get('/umkms', [UmkmController::class, 'index']);
+Route::post('/umkms', [UmkmController::class, 'store']);
+Route::get('/umkms/{umkm}', [UmkmController::class, 'show']);
