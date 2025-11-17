@@ -34,11 +34,20 @@ class WisataController extends Controller
         }
 
         $wisata = Wisata::create([
-            'nama_wisata' => $request->nama_wisata,
-            'alamat_wisata' => $request->alamat_wisata,
-            'informasi_wisata' => $request->informasi_wisata,
-            'biaya_wisata' => $request->biaya_wisata,
+        'nama_wisata' => $request->nama_wisata,
+        'alamat_wisata' => $request->alamat_wisata,
+        'informasi_wisata' => $request->informasi_wisata,
+        'biaya_wisata' => $request->biaya_wisata,
+        'kategori' => $request->kategori,
+        'lokasi' => $request->lokasi,
+        'foto_wisata' => $foto
             
         ]);
+
+    return response()->json([
+        'status' => true,
+        'message' => 'Data wisata berhasil ditambahkan',
+        'data' => $wisata
+       ]);
     }
 }

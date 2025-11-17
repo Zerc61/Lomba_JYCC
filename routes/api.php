@@ -38,4 +38,6 @@ Route::delete('/topups/{topup}', [TopupController::class, 'destroy']);
 //api WISATA
 
 Route::get('/wisatas', [WisataController::class, 'index']);
+Route::post('/wisatas', [WisataController::class, 'store']);
+
 
