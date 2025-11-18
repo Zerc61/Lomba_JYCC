@@ -11,13 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('pakets', function (Blueprint $table) {
-            $table->id('id_paket');
-            $table->string('jenis_paket', 100);
-            $table->text('deskripsi_paket');
-            $table->string('total_paket');
+        Schema::create('vouchers', function (Blueprint $table) {
+            $table->id();
+            $table->string('kode_voucher', 50);
+            $table->integer('diskon_persen')->nullable();
+            $table->decimal('diskon_nominal', 10, 2)->nullable();
+            $table->date('expired_at');
             $table->timestamps();
-
         });
     }
 
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('pakets');
+        Schema::dropIfExists('vouchers');
     }
 };
