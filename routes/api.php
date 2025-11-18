@@ -5,24 +5,19 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\TopupController;
 use App\Http\Controllers\WisataController;
 use App\Http\Controllers\UmkmController;
+use App\Http\Controllers\Login\AuthController;
 
 // USER
 Route::get('/users', [UserController::class, 'index']);
 Route::post('/users', [UserController::class, 'store']);
-Route::get('/users/{user}', [UserController::class, 'show']);
 Route::put('/users/{user}', [UserController::class, 'update']);
 Route::patch('/users/{user}', [UserController::class, 'patch']);
 Route::delete('/users/{user}', [UserController::class, 'destroy']);
 
-Route::post('/login', [UserController::class, 'login']);
-
-Route::get('/test', function () {
-    return response()->json(['message' => 'API berjalan']);
-});
-
-// Sanctum Protected
+Route::post('/login', [AuthController::class, 'login']);
+Route::post('/register', [AuthController::class, 'register']);
 Route::middleware('auth:sanctum')->group(function () {
-    Route::post('/logout', [UserController::class, 'logout']);
+    Route::post('/logout', [AuthController::class, 'logout']);
 });
 
 // TOPUP
