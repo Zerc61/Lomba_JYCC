@@ -44,7 +44,7 @@ class PenginapanController extends Controller
         return response()->json([
             "status" => 1,
             "data" => $penginapan,
-            "msg" => "Penginapan created successfully"
+            "msg" => "Penginapan berhasil dibuat"
         ]);
     }
 
@@ -55,7 +55,7 @@ class PenginapanController extends Controller
         if (!$penginapan) {
             return response()->json([
                 "status" => 0,
-                "msg" => "Penginapan not found"
+                "msg" => "Penginapan tidak ditemukan"
             ], 404);
         }
 
@@ -72,7 +72,7 @@ class PenginapanController extends Controller
         if (!$penginapan) {
             return response()->json([
                 "status" => 0,
-                "msg" => "Penginapan not found"
+                "msg" => "Penginapan tidak ditemukan"
             ], 404);
         }
 
@@ -99,7 +99,7 @@ class PenginapanController extends Controller
 
         return response()->json([
             "status" => 1,
-            "msg" => "Penginapan updated successfully",
+            "msg" => "Penginapan berhasil diupdate 🙌",
             "data" => $penginapan
         ]);
     }
@@ -111,7 +111,7 @@ class PenginapanController extends Controller
         if (!$penginapan) {
             return response()->json([
                 "status" => 0,
-                "msg" => "Penginapan not found"
+                "msg" => "Penginapan tidak ditemukan"
             ], 404);
         }
 
@@ -132,7 +132,7 @@ class PenginapanController extends Controller
 
         return response()->json([
             "status" => 1,
-            "msg" => "Penginapan patched successfully",
+            "msg" => "Penginapan berhasil diupdate 😍",
             "data" => $penginapan
         ]);
     }
@@ -144,7 +144,7 @@ class PenginapanController extends Controller
         if (!$penginapan) {
             return response()->json([
                 "status" => 0,
-                "msg" => "Penginapan not found"
+                "msg" => "Penginapan tidak ditemukan"
             ], 404);
         }
 
@@ -152,7 +152,7 @@ class PenginapanController extends Controller
 
         return response()->json([
             "status" => 1,
-            "msg" => "Penginapan deleted successfully"
+            "msg" => "Penginapan berhasil dihapus 😍"
         ]);
     }
 }
