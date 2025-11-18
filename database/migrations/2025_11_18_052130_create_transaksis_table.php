@@ -6,11 +6,12 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-
+    /**
+     * Run the migrations.
+     */
     public function up(): void
     {
         Schema::create('transaksis', function (Blueprint $table) {
-<<<<<<< HEAD
                 $table->id('id_transaksi');
                 $table->integer('id_transportasi');
                 $table->integer('id_user');
@@ -23,16 +24,13 @@ return new class extends Migration
                 $table->string('tujuan', 100);
                 $table->string('status', 20);
                 $table->timestamps();
-=======
-            $table->id('id_transaksi');
-            $table->decimal('total_harga');
-            $table->timestamps();
->>>>>>> d1e06a44df17ad962ac9ea6d530ff1855bcbdafe
         });
 
     }
 
-
+    /**
+     * Reverse the migrations.
+     */
     public function down(): void
     {
         Schema::dropIfExists('transaksis');
