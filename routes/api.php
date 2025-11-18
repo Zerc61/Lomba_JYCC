@@ -5,6 +5,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\TopupController;
 use App\Http\Controllers\WisataController;
 use App\Http\Controllers\UmkmController;
+use App\Http\Controllers\PenginapanController;
 
 // USER
 Route::get('/users', [UserController::class, 'index']);
@@ -32,6 +33,12 @@ Route::get('/topups/{topup}', [TopupController::class, 'show']);
 Route::put('/topups/{topup}', [TopupController::class, 'update']);
 Route::patch('/topups/{topup}', [TopupController::class, 'patch']);
 Route::delete('/topups/{topup}', [TopupController::class, 'destroy']);
+
+Route::get('/penginapans', [PenginapanController::class, 'index']);
+Route::post('/penginapans', [PenginapanController::class, 'store']);
+Route::get('/penginapans/{id}', [PenginapanController::class, 'show']);
+Route::put('/penginapans/{id}', [PenginapanController::class, 'update']);
+Route::delete('/penginapans/{id}', [PenginapanController::class, 'destroy']);
 
 // WISATA
 Route::get('/wisatas', [WisataController::class, 'index']);
