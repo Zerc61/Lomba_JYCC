@@ -29,6 +29,8 @@ Route::put('/topups/{topup}', [TopupController::class, 'update']);
 Route::patch('/topups/{topup}', [TopupController::class, 'patch']);
 Route::delete('/topups/{topup}', [TopupController::class, 'destroy']);
 
+
+// PENGINAPAN
 Route::get('/penginapans', [PenginapanController::class, 'index']);
 Route::post('/penginapans', [PenginapanController::class, 'store']);
 Route::get('/penginapans/{id}', [PenginapanController::class, 'show']);
