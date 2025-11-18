@@ -12,9 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('otps', function (Blueprint $table) {
-            $table->id();
+            $table->id('otp_id');
+            $table->integer('user_id');
+            $table->string('otp_kode', 6);
             $table->timestamps();
-        });
+});
+
     }
 
     /**
