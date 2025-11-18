@@ -5,11 +5,8 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\TopupController;
 use App\Http\Controllers\WisataController;
 use App\Http\Controllers\UmkmController;
-<<<<<<< HEAD
 use App\Http\Controllers\Login\AuthController;
-=======
 use App\Http\Controllers\PenginapanController;
->>>>>>> deef0c61bdd6298c1bb8a7523a6a3441121cda40
 
 // USER
 Route::get('/users', [UserController::class, 'index']);
