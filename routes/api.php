@@ -16,6 +16,7 @@ use App\Http\Controllers\RoleController;
 
 // USER
 Route::get('/users', [UserController::class, 'index']);
+Route::get('/users/{user}', [UserController::class, 'show']);
 Route::put('/users/{user}', [UserController::class, 'update']);
 Route::patch('/users/{user}', [UserController::class, 'patch']);
 Route::delete('/users/{user}', [UserController::class, 'destroy']);
@@ -43,13 +44,21 @@ Route::put('/penginapans/{id}', [PenginapanController::class, 'update']);
 Route::delete('/penginapans/{id}', [PenginapanController::class, 'destroy']);
 
 // WISATA
-Route::get('/wisatas', [WisataController::class, 'index']);
-Route::post('/wisatas', [WisataController::class, 'store']);
+Route::get('/wisatas', [WisataController::class, 'index']);        // List semua wisata
+Route::post('/wisatas', [WisataController::class, 'store']);       // Tambah wisata baru
+Route::get('/wisatas/{wisata}', [WisataController::class, 'show']); // Tampilkan detail wisata
+Route::put('/wisatas/{wisata}', [WisataController::class, 'update']);  // Update penuh
+Route::patch('/wisatas/{wisata}', [WisataController::class, 'patch']); // Update sebagian
+Route::delete('/wisatas/{wisata}', [WisataController::class, 'destroy']); // Hapus wisata
 
 // UMKM
-Route::get('/umkms', [UmkmController::class, 'index']);
-Route::post('/umkms', [UmkmController::class, 'store']);
-Route::get('/umkms/{umkm}', [UmkmController::class, 'show']);
+Route::get('/umkms', [UmkmController::class, 'index']);       // ambil list UMKM
+Route::post('/umkms', [UmkmController::class, 'store']);      // tambah UMKM
+Route::get('/umkms/{umkm}', [UmkmController::class, 'show']); // ambil 1 UMKM
+Route::put('/umkms/{umkm}', [UmkmController::class, 'update']); // update penuh
+Route::patch('/umkms/{umkm}', [UmkmController::class, 'patch']); // update sebagian
+Route::delete('/umkms/{umkm}', [UmkmController::class, 'destroy']); // hapus
+
 
 
 // PAKET
