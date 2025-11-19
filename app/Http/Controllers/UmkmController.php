@@ -4,39 +4,33 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Umkm;
+use Illuminate\Support\Facades\Storage;
 
 class UmkmController extends Controller
 {
     public function index()
     {
         $umkm = Umkm::latest()->paginate(10);
-
-        return response()->json([
-            'status' => 1,
-            'data' => $umkm
-        ]);
+        return response()->json(['status' => 1, 'data' => $umkm]);
     }
 
     public function store(Request $request)
     {
         $request->validate([
-          'nama_umkm' => 'required|string|max:30',
-          'pemilik' => 'required|string|max:30',
-          'informasi_umkm' => 'required|string',
-          'pasokan_umkm' => 'required|integer',
-          'harga' => 'required|numeric',
-          'kategori' => 'required|string|max:30',
-          'foto_umkm' => 'nullable|image|max:2048',
-          'jam_buka' => 'nullable|date',
-          'jam_tutup' => 'nullable|date'
-       ]);
+            'nama_umkm' => 'required|string|max:30',
+            'pemilik' => 'required|string|max:30',
+            'informasi_umkm' => 'required|string',
+            'pasokan_umkm' => 'required|integer',
+            'harga' => 'required|numeric',
+            'kategori' => 'required|string|max:30',
+            'foto_umkm' => 'nullable|image|max:2048',
+            'jam_buka' => 'nullable|date',
+            'jam_tutup' => 'nullable|date',
+        ]);
 
-
-        $foto = null;
-
-        if ($request->hasFile('foto_umkm')) {
-            $foto = file_get_contents($request->file('foto_umkm'));
-        }
+        $fotoPath = $request->hasFile('foto_umkm') 
+            ? $request->file('foto_umkm')->store('umkm', 'public') 
+            : null;
 
         $umkm = Umkm::create([
             'nama_umkm' => $request->nama_umkm,
@@ -47,136 +41,94 @@ class UmkmController extends Controller
             'kategori' => $request->kategori,
             'jam_buka' => $request->jam_buka,
             'jam_tutup' => $request->jam_tutup,
-            'foto_umkm' => $foto
+            'foto_umkm' => $fotoPath,
         ]);
 
-        return response()->json([
-            'status' => 1,
-            'message' => 'Umkm berhasil ditambahkan',
-            'data' => $umkm
-        ]);
+        return response()->json(['status' => 1, 'message' => 'UMKM berhasil ditambahkan', 'data' => $umkm]);
     }
 
     public function show(Umkm $umkm)
     {
-        return response()->json([
-            'status' => 1,
-            'data' => $umkm
-        ]);
+        return response()->json(['status' => 1, 'data' => $umkm]);
     }
 
-
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, Umkm $umkm)
     {
         $request->validate([
-          'nama_umkm' => 'required|string|max:30',
-          'pemilik' => 'required|string|max:30',
-          'informasi_umkm' => 'required|string',
-          'pasokan_umkm' => 'required|integer',
-          'harga' => 'required|numeric',
-          'kategori' => 'required|string|max:30',
-          'foto_umkm' => 'nullable|image|max:2048',
-          'jam_buka' => 'nullable|date',
-          'jam_tutup' => 'nullable|date'
-       ]);
-
-
-        $foto = $umkm->foto_umkm;
+            'nama_umkm' => 'required|string|max:30',
+            'pemilik' => 'required|string|max:30',
+            'informasi_umkm' => 'required|string',
+            'pasokan_umkm' => 'required|integer',
+            'harga' => 'required|numeric',
+            'kategori' => 'required|string|max:30',
+            'foto_umkm' => 'nullable|image|max:2048',
+            'jam_buka' => 'nullable|date',
+            'jam_tutup' => 'nullable|date',
+        ]);
 
         if ($request->hasFile('foto_umkm')) {
-            $foto = file_get_contents($request->file('foto_umkm'));
+            $umkm->foto_umkm = $request->file('foto_umkm')->store('umkm', 'public');
         }
 
-        $umkm->update([
-            'nama_umkm' => $request->nama_umkm,
-            'pemilik' => $request->pemilik,
-            'informasi_umkm' => $request->informasi_umkm,
-            'pasokan_umkm' => $request->pasokan_umkm,
-            'harga' => $request->harga,
-            'kategori' => $request->kategori,
-            'jam_buka' => $request->jam_buka,
-            'jam_tutup' => $request->jam_tutup,
-            'foto_umkm' => $foto
-        ]);
+        $umkm->update($request->only([
+            'nama_umkm', 'pemilik', 'informasi_umkm', 'pasokan_umkm', 'harga', 'kategori', 'jam_buka', 'jam_tutup'
+        ]));
 
-           return response()->json([
-            'status' => 1,
-            'message' => 'UMKM berhasil diperbarui',
-            'data' => $umkm
-        ]);
+        return response()->json(['status' => 1, 'message' => 'UMKM berhasil diperbarui', 'data' => $umkm]);
     }
 
-
-    public function patch(Request $request, Umkm $umkm) {
+    public function patch(Request $request, Umkm $umkm)
+    {
         $rules = [];
-
-        if($request->has('nama_umkm')){
-            $rules['nama_umkm'] = 'string|max:30';
+        $fields = ['nama_umkm','pemilik','informasi_umkm','pasokan_umkm','harga','kategori','jam_buka','jam_tutup'];
+        
+        foreach ($fields as $field) {
+            if ($request->has($field)) {
+                switch($field) {
+                    case 'nama_umkm':
+                    case 'pemilik':
+                    case 'kategori':
+                        $rules[$field] = 'string|max:30';
+                        break;
+                    case 'informasi_umkm':
+                        $rules[$field] = 'string';
+                        break;
+                    case 'pasokan_umkm':
+                        $rules[$field] = 'integer';
+                        break;
+                    case 'harga':
+                        $rules[$field] = 'numeric';
+                        break;
+                    case 'jam_buka':
+                    case 'jam_tutup':
+                        $rules[$field] = 'date';
+                        break;
+                }
+            }
         }
 
-        if($request->has('pemilik')){
-            $rules['pemiik'] = 'string|max:30';
-        }
-
-        if($request->has('informasi_umkm')){
-            $rules['informasi_umkm'] = 'string';
-        }
-
-        if($request->has('pasokan_umkm')){
-            $rules['nama_umkm'] = 'integer';
-        }
-
-        if($request->has('harga')){
-            $rules['harga'] = 'numeric';
-        }
-
-        if($request->has('kategori')){
-            $rules['nama_umkm'] = 'string|max:30';
-        }
-
-        if($request->has('jam_buka')){
-            $rules['jam_buka'] = 'date';
-        }
-        if($request->has('jam_tutup')){
-            $rules['jam_tutup'] = 'date';
-        }
-           if ($request->hasFile('foto_umkm')) {
+        if ($request->hasFile('foto_umkm')) {
             $rules['foto_umkm'] = 'image|max:2048';
         }
 
         $request->validate($rules);
 
-        foreach ($request->only(array_keys($rules)) as $key => $value) {
-            if ($key === 'foto_umkm'){
-                $umkm->foto_umkm = file_get_contents($request->file('foto_umkm'));
+        foreach ($rules as $key => $value) {
+            if ($key === 'foto_umkm') {
+                $umkm->foto_umkm = $request->file('foto_umkm')->store('umkm', 'public');
             } else {
-                $umkm->$key = $value;
+                $umkm->$key = $request->$key;
             }
         }
 
-        $umkm -> save();
+        $umkm->save();
 
-
-        return response()->json([
-            'status' => 1,
-            'message' => 'umkm berhasil diperbarui',
-            'data' => $umkm
-        ]);
+        return response()->json(['status' => 1, 'message' => 'UMKM berhasil diperbarui', 'data' => $umkm]);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Umkm $umkm)
     {
         $umkm->delete();
-
-        return response()->json([
-            'status' => 1,
-            'message' => 'UMKM berhasil dihapus'
-        ]);
+        return response()->json(['status' => 1, 'message' => 'UMKM berhasil dihapus']);
     }
 }
