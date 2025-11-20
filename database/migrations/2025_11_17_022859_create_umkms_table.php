@@ -16,12 +16,10 @@ return new class extends Migration
             $table->string('nama_umkm', 30);
             $table->string('pemilik', 30);
             $table->text('informasi_umkm');
-            $table->integer('pasokan_umkm');
-            $table->decimal('harga', 13,2);
-            $table->string('kategori', 30);
+            $table->enum('kategori', ['kuliner', 'makanan_olahan', 'fashion', 'kerajinan_tangan', 'jasa', 'agribisnis', 'it_teknologi', 'peternakan', 'perdagangan']);
             $table->binary('foto_umkm')->nullable();
-            $table->dateTime('jam_buka')->nullable();
-            $table->dateTime('jam_tutup')->nullable();
+            $table->time('jam_buka')->nullable();
+            $table->time('jam_tutup')->nullable();
             $table->timestamps();
         });
     }
