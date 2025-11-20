@@ -121,10 +121,10 @@ Route::delete('/roles/{role}', [RoleController::class, 'destroy']);
 
 
 
-// DRIVER
-Route::get('/drivers', [DriverController::class, 'index']);         
-Route::post('/drivers', [DriverController::class, 'store']);        
-Route::get('/drivers/{driver}', [DriverController::class, 'show']); 
-Route::put('/drivers/{driver}', [DriverController::class, 'update']);  
-Route::patch('/drivers/{driver}', [DriverController::class, 'patch']); 
-Route::delete('/drivers/{driver}', [DriverController::class, 'destroy']); 
+
+Route::get('/drivers', [DriverController::class, 'index']);
+Route::post('/drivers', [DriverController::class, 'store']);
+Route::get('/drivers/{id}', [DriverController::class, 'show']);
+Route::put('/drivers/{id}', [DriverController::class, 'update']);
+Route::delete('/drivers/{id}', [DriverController::class, 'destroy']);
+

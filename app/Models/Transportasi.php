@@ -11,7 +11,6 @@ class Transportasi extends Model
 
     protected $primaryKey = 'id_transportasi';
     protected $fillable = [
-        'driver_id',
         'informasi_transportasi',
         'jenis_kendaraan',
         'plat_nomor',
@@ -21,8 +20,4 @@ class Transportasi extends Model
         'deskripsi_transportasi',
     ];
 
-    public function driver()
-    {
-        return $this->belongsTo(Driver::class, 'driver_id', 'id_driver');
-    }
 }

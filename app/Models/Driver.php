@@ -15,14 +15,10 @@ class Driver extends Model
         'umur',
         'jenis_kelamin',
         'rating',
-        'no_telepon',
+        'no_hp',
         'alamat',
         'foto_driver',
+        'email'
     ];
 
-    // Relasi ke transportasi (1 driver bisa punya banyak transportasi)
-    public function transportasis()
-    {
-        return $this->hasMany(Transportasi::class, 'driver_id', 'id_driver');
-    }
 }

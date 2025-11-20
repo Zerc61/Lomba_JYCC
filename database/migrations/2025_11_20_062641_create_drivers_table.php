@@ -10,11 +10,13 @@ return new class extends Migration
     {
         Schema::create('drivers', function (Blueprint $table) {
             $table->id('id_driver');
-            $table->string('nama', 50);
+            $table->string('nama', 30);
             $table->integer('umur')->nullable();
-            $table->decimal('rating', 3, 2)->nullable();
             $table->string('no_hp', 20)->nullable();
-            $table->string('email')->nullable();
+            $table->string('email', 50)->nullable()->unique();
+            $table->decimal('rating', 3, 2)->nullable();
+            $table->text('alamat')->nullable();
+            $table->binary('foto_driver')->nullable(); // binary data
             $table->timestamps();
         });
     }

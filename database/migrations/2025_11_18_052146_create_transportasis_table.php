@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::create('transportasis', function (Blueprint $table) {
     $table->id('id_transportasi');
-    $table->foreignId('driver_id')->nullable()->constrained('drivers', 'id_driver')->onDelete('set null');
     $table->string('informasi_transportasi', 100);
     $table->string('jenis_kendaraan', 50);
     $table->string('plat_nomor', 20);
