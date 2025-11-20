@@ -30,7 +30,7 @@ class UmkmController extends Controller
     // ============================
     // STORE UMKM
     // ============================
-   public function store(Request $request)
+public function store(Request $request)
 {
     $validated = $request->validate([
         'nama_umkm' => 'required',
@@ -39,7 +39,7 @@ class UmkmController extends Controller
         'kategori' => 'required',
         'jam_buka' => 'nullable|date_format:H:i',
         'jam_tutup' => 'nullable|date_format:H:i',
-        'foto_umkm' => 'nullable', // Base64 string
+        'foto_umkm' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048', // ubah jadi file
     ]);
 
     // Convert jam ke format MySQL
@@ -51,6 +51,13 @@ class UmkmController extends Controller
         $validated['jam_tutup'] = now()->format('Y-m-d') . ' ' . $request->jam_tutup . ':00';
     }
 
+    // Handle upload foto
+    if ($request->hasFile('foto_umkm')) {
+        $file = $request->file('foto_umkm');
+        $path = $file->store('umkms', 'public'); // simpan di storage/app/public/umkms
+        $validated['foto_umkm'] = $path; // simpan path ke database
+    }
+
     // Simpan ke database
     $umkm = Umkm::create($validated);
 
@@ -60,6 +67,7 @@ class UmkmController extends Controller
         'data' => $umkm
     ]);
 }
+
 
 
     // ============================
