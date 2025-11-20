@@ -13,6 +13,7 @@ use App\Http\Controllers\TransportasiController;
 use App\Http\Controllers\RuteController;
 use App\Http\Controllers\OtpController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\DriverController;
 
 // USER
 Route::get('/users', [UserController::class, 'index']);
@@ -117,3 +118,13 @@ Route::get('/roles/{role}', [RoleController::class, 'show']);
 Route::put('/roles/{role}', [RoleController::class, 'update']);
 Route::patch('/roles/{role}', [RoleController::class, 'patch']);
 Route::delete('/roles/{role}', [RoleController::class, 'destroy']);
+
+
+
+// DRIVER
+Route::get('/drivers', [DriverController::class, 'index']);         
+Route::post('/drivers', [DriverController::class, 'store']);        
+Route::get('/drivers/{driver}', [DriverController::class, 'show']); 
+Route::put('/drivers/{driver}', [DriverController::class, 'update']);  
+Route::patch('/drivers/{driver}', [DriverController::class, 'patch']); 
+Route::delete('/drivers/{driver}', [DriverController::class, 'destroy']); 
