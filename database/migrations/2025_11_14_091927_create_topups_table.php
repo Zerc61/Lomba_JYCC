@@ -13,15 +13,17 @@ return new class extends Migration
     {
         Schema::create('topups', function (Blueprint $table) {
             $table->id('id_topup');
+           $table->unsignedBigInteger('id_user');
             $table->string('name', 20);
             $table->string('email', 40)->unique();
-            $table->string('password');
             $table->string('no_telpon', 20)->unique();
-            $table->enum('role', ['admin', 'user', 'umkm', 'driver'])->default('user');
+            $table->string('role');
             $table->decimal('saldo_rupiah', 15, 2)->default(0);
             $table->decimal('saldo_emas', 15, 2)->default(0);
             $table->decimal('saldo_dcoin', 15, 2)->default(0);
-
+            $table->string('pajak');
+            $table->string('admin');
+            $table->text('metode_pembayaran');
             $table->timestamps();
         });
     }
