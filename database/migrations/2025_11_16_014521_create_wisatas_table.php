@@ -6,28 +6,31 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('wisatas', function (Blueprint $table) {
-            $table->id('id_wisata');
-            $table->string('nama_wisata', 30); // FIX
-            $table->string('alamat_wisata', 30);
-            $table->text('informasi_wisata'); // FIX typo
-            $table->decimal('biaya_wisata', 10, 2);
-            $table->string('kategori', 30);
+            $table->id('id_wisata'); // primary key jadi id_wisata
+            $table->string('nama', 100);
+            $table->enum('kategori', [
+                'Wisata Alam',
+                'Wisata Budaya',
+                'Wisata Sejarah',
+                'Wisata Religi',
+                'Wisata Kuliner',
+                'Wisata Belanja',
+                'Wisata Edukasi',
+                'Wisata Petualangan',
+                'Wisata Kesehatan'
+            ]);
+            $table->string('alamat_wisata');
+            $table->text('deskripsi');
             $table->binary('foto_wisata')->nullable();
-            $table->string('lokasi', 30);
+            $table->decimal('biaya_wisata', 15, 2);
+            $table->string('lokasi', 150);
             $table->timestamps();
-});
-
+        });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('wisatas');
