@@ -10,6 +10,7 @@ return new class extends Migration
     {
         Schema::create('wisatas', function (Blueprint $table) {
             $table->id('id_wisata'); // primary key jadi id_wisata
+            $table->unsignedBigInteger('id_user');
             $table->string('nama', 100);
             $table->enum('kategori', [
                 'Wisata Alam',
