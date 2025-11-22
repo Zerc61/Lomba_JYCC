@@ -29,12 +29,12 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 
 // TOPUP
-Route::get('/topups', [TopupController::class, 'index']);
-Route::post('/topups', [TopupController::class, 'store']);
-Route::get('/topups/{topup}', [TopupController::class, 'show']);
-Route::put('/topups/{topup}', [TopupController::class, 'update']);
-Route::patch('/topups/{topup}', [TopupController::class, 'patch']);
-Route::delete('/topups/{topup}', [TopupController::class, 'destroy']);
+Route::get('/topups', [TopupController::class, 'index']); // ambil daftar top-up
+Route::post('/topups', [TopupController::class, 'store']); // simpan top-up baru
+Route::get('/topups/{topup}', [TopupController::class, 'show']); // detail top-up
+Route::put('/topups/{topup}', [TopupController::class, 'update']); // update
+Route::delete('/topups/{topup}', [TopupController::class, 'destroy']); // hapus
+
 
 
 // PENGINAPAN

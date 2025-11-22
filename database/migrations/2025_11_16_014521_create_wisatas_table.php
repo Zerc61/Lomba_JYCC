@@ -9,9 +9,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('wisatas', function (Blueprint $table) {
-            $table->id('id_wisata'); // primary key jadi id_wisata
-            $table->unsignedBigInteger('id_user');
+            $table->id('id_wisata');
+            $table->string('nama_user', 50);
+
             $table->string('nama', 100);
+
+            // ENUM kategori
             $table->enum('kategori', [
                 'Wisata Alam',
                 'Wisata Budaya',
@@ -21,14 +24,21 @@ return new class extends Migration
                 'Wisata Belanja',
                 'Wisata Edukasi',
                 'Wisata Petualangan',
-                'Wisata Kesehatan'
+                'Wisata Kesehatan',
             ]);
-            $table->string('alamat_wisata');
+
+            $table->string('alamat_wisata', 255);
             $table->text('deskripsi');
+
+            // FOTO BINARY - nullable
             $table->binary('foto_wisata')->nullable();
-            $table->decimal('biaya_wisata', 15, 2);
-            $table->string('lokasi', 150);
+
+            $table->decimal('biaya_wisata', 15, 2)->default(0);
+            $table->string('lokasi', 255);
+
             $table->timestamps();
+
+        
         });
     }
 

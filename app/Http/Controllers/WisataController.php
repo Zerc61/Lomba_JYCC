@@ -2,170 +2,157 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use App\Models\Wisata;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 
 class WisataController extends Controller
 {
-    // LIST SEMUA WISATA
     public function index()
     {
-        $wisatas = Wisata::latest()->paginate(10); 
-        
-        // Konversi data binary foto kembali ke Base64 saat mengirim ke frontend
-        $data_wisata = $wisatas->map(function ($wisata) {
-            if ($wisata->foto_wisata) {
-                // Konversi binary ke Base64 string
-                $wisata->foto_wisata_base64 = base64_encode($wisata->foto_wisata);
-            }
-            return $wisata;
-        });
+        $wisatas = Wisata::orderBy('created_at', 'desc')->get();
 
         return response()->json([
             'status' => 1,
-            // Kembalikan data yang sudah dimodifikasi
-            'data'   => $data_wisata,
-            'paging' => [
-                'current_page' => $wisatas->currentPage(),
-                'last_page' => $wisatas->lastPage(),
-                'total' => $wisatas->total(),
-            ]
+            'total' => $wisatas->count(),
+            'message' => 'Data wisata berhasil dimuat.',
+            'data' => $wisatas,
         ]);
     }
 
-    // DETAIL WISATA
-    public function show(Wisata $wisata)
-    {
-        // Konversi data binary foto kembali ke Base64 saat mengirim ke frontend
-        if ($wisata->foto_wisata) {
-            $wisata->foto_wisata_base64 = base64_encode($wisata->foto_wisata);
-        }
-
-        return response()->json([
-            'status' => 1,
-            'data' => $wisata
-        ]);
-    }
-
-    // TAMBAH WISATA BARU
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'nama' => 'required|string|max:100',
-            'kategori' => 'required|in:Wisata Alam,Wisata Budaya,Wisata Sejarah,Wisata Religi,Wisata Kuliner,Wisata Belanja,Wisata Edukasi,Wisata Petualangan,Wisata Kesehatan',
-            'alamat_wisata' => 'required|string',
-            'deskripsi' => 'required',
-            // Dibiarkan 'nullable' karena Base64 akan dikirim sebagai string
-            'foto_wisata' => 'nullable', 
-            'biaya_wisata' => 'required|numeric',
-            'lokasi' => 'required|string|max:150',
+        // Validasi tanpa id_user dan nama_user
+        $validator = Validator::make($request->all(), [
+            'nama' => 'required|string|max:255',
+            'kategori' => 'required|string|max:100',
+            'alamat_wisata' => 'required|string|max:255',
+            'deskripsi' => 'required|string',
+            'biaya_wisata' => 'required|integer|min:0',
+            'lokasi' => 'required|string|max:255',
+            'foto_wisata' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
         ]);
 
-        // DIKEMBALIKAN: Dekode Base64 string menjadi binary data
-        if ($request->foto_wisata) {
-            $validated['foto_wisata'] = base64_decode($request->foto_wisata);
-        } else {
-            // Penting: Pastikan Base64 kosong saat null
-            $validated['foto_wisata'] = null; 
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        $wisata = Wisata::create($validated);
-        
-        // Konversi balik foto yang baru dibuat untuk respons
-        if ($wisata->foto_wisata) {
-            $wisata->foto_wisata_base64 = base64_encode($wisata->foto_wisata);
-        }
+        try {
+            $data = $request->except('foto_wisata');
+            $data['biaya_wisata'] = (int) $data['biaya_wisata'];
 
-        return response()->json([
-            'status' => 1,
-            'message' => 'Wisata berhasil ditambahkan',
-            'data' => $wisata
-        ], 201);
-    }
-
-    // UPDATE PENUH (PUT)
-    public function update(Request $request, Wisata $wisata)
-    {
-        $validated = $request->validate([
-            'nama' => 'required|string|max:100',
-            'kategori' => 'required|in:Wisata Alam,Wisata Budaya,Wisata Sejarah,Wisata Religi,Wisata Kuliner,Wisata Belanja,Wisata Edukasi,Wisata Petualangan,Wisata Kesehatan',
-            'alamat_wisata' => 'required|string',
-            'deskripsi' => 'required',
-            'foto_wisata' => 'nullable',
-            'biaya_wisata' => 'required|numeric',
-            'lokasi' => 'required|string|max:150',
-        ]);
-
-        // DIKEMBALIKAN: Dekode Base64 string menjadi binary data
-        if ($request->foto_wisata) {
-            $validated['foto_wisata'] = base64_decode($request->foto_wisata);
-        } else {
-             // Jika Base64 dikirim null/kosong, set binary menjadi null
-            $validated['foto_wisata'] = null;
-        }
-
-        $wisata->update($validated);
-        
-        // Konversi balik foto yang diupdate untuk respons
-        if ($wisata->foto_wisata) {
-            $wisata->foto_wisata_base64 = base64_encode($wisata->foto_wisata);
-        }
-
-        return response()->json([
-            'status' => 1,
-            'message' => 'Wisata berhasil diperbarui',
-            'data' => $wisata
-        ]);
-    }
-
-    // UPDATE SEBAGIAN (PATCH)
-    public function patch(Request $request, Wisata $wisata)
-    {
-        $validated = $request->validate([
-            'nama' => 'sometimes|required|string|max:100',
-            'kategori' => 'sometimes|required|in:Wisata Alam,Wisata Budaya,Wisata Sejarah,Wisata Religi,Wisata Kuliner,Wisata Belanja,Wisata Edukasi,Wisata Petualangan,Wisata Kesehatan',
-            'alamat_wisata' => 'sometimes|required|string',
-            'deskripsi' => 'sometimes|required',
-            'foto_wisata' => 'sometimes|nullable',
-            'biaya_wisata' => 'sometimes|required|numeric',
-            'lokasi' => 'sometimes|required|string|max:150',
-        ]);
-
-        // DIKEMBALIKAN: Dekode Base64 string menjadi binary data, HANYA JIKA ADA di request
-        if ($request->has('foto_wisata')) {
-            if ($request->foto_wisata) {
-                $validated['foto_wisata'] = base64_decode($request->foto_wisata);
+            if ($request->hasFile('foto_wisata')) {
+                $file = $request->file('foto_wisata');
+                $filename = time() . '-' . Str::random(10) . '.' . $file->getClientOriginalExtension();
+                $path = $file->storeAs('public/wisatas', $filename);
+                $data['foto_wisata'] = Storage::url($path);
             } else {
-                $validated['foto_wisata'] = null;
+                $data['foto_wisata'] = null;
             }
-        } else {
-            // Penting: Jangan lakukan apa-apa jika foto_wisata tidak dikirimkan sama sekali
-            unset($validated['foto_wisata']); 
+
+            $wisata = Wisata::create($data);
+
+            return response()->json([
+                'status' => 1,
+                'message' => 'Wisata berhasil ditambahkan.',
+                'data' => $wisata,
+            ], 201);
+
+        } catch (\Exception $e) {
+            if (isset($path)) {
+                Storage::delete($path);
+            }
+            return response()->json([
+                'status' => 0,
+                'message' => 'Gagal menyimpan data wisata: ' . $e->getMessage()
+            ], 500);
         }
-
-        $wisata->update($validated);
-
-        // Konversi balik foto yang diupdate untuk respons
-        if ($wisata->foto_wisata) {
-            $wisata->foto_wisata_base64 = base64_encode($wisata->foto_wisata);
-        }
-
-        return response()->json([
-            'status' => 1,
-            'message' => 'Wisata berhasil diupdate sebagian',
-            'data' => $wisata
-        ]);
     }
 
-    // HAPUS WISATA
-    public function destroy(Wisata $wisata)
+    public function update(Request $request, $id)
     {
-        // Tidak ada yang perlu dihapus dari storage karena data disimpan di DB
-        $wisata->delete();
+        $wisata = Wisata::find($id);
 
-        return response()->json([
-            'status' => 1,
-            'message' => 'Wisata berhasil dihapus'
+        if (!$wisata) {
+            return response()->json(['status' => 0, 'message' => 'Wisata tidak ditemukan.'], 404);
+        }
+
+        // Validasi tanpa id_user dan nama_user
+        $validator = Validator::make($request->all(), [
+            'nama' => 'required|string|max:255',
+            'kategori' => 'required|string|max:100',
+            'alamat_wisata' => 'required|string|max:255',
+            'deskripsi' => 'required|string',
+            'biaya_wisata' => 'required|integer|min:0',
+            'lokasi' => 'required|string|max:255',
+            'foto_wisata' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
         ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        try {
+            $data = $request->except('foto_wisata', '_method');
+            $data['biaya_wisata'] = (int) $data['biaya_wisata'];
+
+            if ($request->hasFile('foto_wisata')) {
+                if ($wisata->foto_wisata && strpos($wisata->foto_wisata, '/storage/') !== false) {
+                    $relativePath = str_replace('/storage/', 'public/', $wisata->foto_wisata);
+                    Storage::delete($relativePath);
+                }
+
+                $file = $request->file('foto_wisata');
+                $filename = time() . '-' . Str::random(10) . '.' . $file->getClientOriginalExtension();
+                $path = $file->storeAs('public/wisatas', $filename);
+                $data['foto_wisata'] = Storage::url($path);
+            }
+
+            $wisata->update($data);
+
+            return response()->json([
+                'status' => 1,
+                'message' => 'Wisata berhasil diupdate.',
+                'data' => $wisata,
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 0,
+                'message' => 'Gagal mengupdate data wisata: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function destroy($id)
+    {
+        $wisata = Wisata::find($id);
+
+        if (!$wisata) {
+            return response()->json(['status' => 0, 'message' => 'Wisata tidak ditemukan.'], 404);
+        }
+
+        try {
+            if ($wisata->foto_wisata && strpos($wisata->foto_wisata, '/storage/') !== false) {
+                $relativePath = str_replace('/storage/', 'public/', $wisata->foto_wisata);
+                Storage::delete($relativePath);
+            }
+
+            $wisata->delete();
+
+            return response()->json([
+                'status' => 1,
+                'message' => 'Wisata berhasil dihapus.'
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 0,
+                'message' => 'Gagal menghapus data wisata: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }

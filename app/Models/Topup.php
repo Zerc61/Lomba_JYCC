@@ -15,15 +15,21 @@ class Topup extends Model
 
       protected $primaryKey = 'id_topup';
 
+    // protected $fillable = [
+    //     'name',
+    //     'email',
+    //     'password',
+    //     'no_telpon',
+    //     'role',
+    //     'saldo_rupiah',
+    //     'saldo_emas',
+    //     'saldo_dcoin'
+    // ];
     protected $fillable = [
-        'name',
-        'email',
-        'password',
-        'no_telpon',
-        'role',
-        'saldo_rupiah',
-        'saldo_emas',
-        'saldo_dcoin'
+        'id_user','name','email','no_telpon','role',
+        'saldo_rupiah','saldo_emas','saldo_dcoin',
+        'pajak','admin','metode_pembayaran',
+        'status_bayar'
     ];
 
     protected $hidden = [
