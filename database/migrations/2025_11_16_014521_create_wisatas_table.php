@@ -31,7 +31,7 @@ return new class extends Migration
             $table->text('deskripsi');
 
             // FOTO BINARY - nullable
-            $table->binary('foto_wisata')->nullable();
+           $table->string('foto_wisata', 255)->nullable();
 
             $table->decimal('biaya_wisata', 15, 2)->default(0);
             $table->string('lokasi', 255);

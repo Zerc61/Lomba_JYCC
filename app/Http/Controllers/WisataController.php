@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Models\Wisata;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -11,9 +10,14 @@ use Illuminate\Support\Str;
 
 class WisataController extends Controller
 {
+    // Menampilkan semua wisata
     public function index()
     {
         $wisatas = Wisata::orderBy('created_at', 'desc')->get();
+
+        $wisatas->each(function($item) {
+            $item->harga_dcoin = round($item->biaya_wisata / 1000);
+        });
 
         return response()->json([
             'status' => 1,
@@ -23,9 +27,9 @@ class WisataController extends Controller
         ]);
     }
 
+    // Menambahkan wisata baru
     public function store(Request $request)
     {
-        // Validasi tanpa id_user dan nama_user
         $validator = Validator::make($request->all(), [
             'nama' => 'required|string|max:255',
             'kategori' => 'required|string|max:100',
@@ -44,16 +48,22 @@ class WisataController extends Controller
             $data = $request->except('foto_wisata');
             $data['biaya_wisata'] = (int) $data['biaya_wisata'];
 
+            // Upload foto jika ada
             if ($request->hasFile('foto_wisata')) {
                 $file = $request->file('foto_wisata');
                 $filename = time() . '-' . Str::random(10) . '.' . $file->getClientOriginalExtension();
-                $path = $file->storeAs('public/wisatas', $filename);
-                $data['foto_wisata'] = Storage::url($path);
+
+                // Simpan ke storage/app/public/wisatas
+                $file->storeAs('public/wisatas', $filename);
+
+                // Simpan URL untuk public access
+                $data['foto_wisata'] = '/storage/wisatas/' . $filename;
             } else {
                 $data['foto_wisata'] = null;
             }
 
             $wisata = Wisata::create($data);
+            $wisata->harga_dcoin = round($wisata->biaya_wisata / 1000);
 
             return response()->json([
                 'status' => 1,
@@ -62,9 +72,6 @@ class WisataController extends Controller
             ], 201);
 
         } catch (\Exception $e) {
-            if (isset($path)) {
-                Storage::delete($path);
-            }
             return response()->json([
                 'status' => 0,
                 'message' => 'Gagal menyimpan data wisata: ' . $e->getMessage()
@@ -72,6 +79,28 @@ class WisataController extends Controller
         }
     }
 
+    // Menampilkan detail wisata
+    public function show($id)
+    {
+        $wisata = Wisata::find($id);
+
+        if (!$wisata) {
+            return response()->json([
+                'status' => 0,
+                'message' => 'Wisata tidak ditemukan.'
+            ], 404);
+        }
+
+        $wisata->harga_dcoin = round($wisata->biaya_wisata / 1000);
+
+        return response()->json([
+            'status' => 1,
+            'data' => $wisata,
+            'message' => 'Data wisata berhasil dimuat.'
+        ]);
+    }
+
+    // Update wisata
     public function update(Request $request, $id)
     {
         $wisata = Wisata::find($id);
@@ -80,7 +109,6 @@ class WisataController extends Controller
             return response()->json(['status' => 0, 'message' => 'Wisata tidak ditemukan.'], 404);
         }
 
-        // Validasi tanpa id_user dan nama_user
         $validator = Validator::make($request->all(), [
             'nama' => 'required|string|max:255',
             'kategori' => 'required|string|max:100',
@@ -100,18 +128,21 @@ class WisataController extends Controller
             $data['biaya_wisata'] = (int) $data['biaya_wisata'];
 
             if ($request->hasFile('foto_wisata')) {
-                if ($wisata->foto_wisata && strpos($wisata->foto_wisata, '/storage/') !== false) {
-                    $relativePath = str_replace('/storage/', 'public/', $wisata->foto_wisata);
-                    Storage::delete($relativePath);
+                // Hapus foto lama jika ada
+                if ($wisata->foto_wisata) {
+                    $oldPath = str_replace('/storage/', 'public/', $wisata->foto_wisata);
+                    Storage::delete($oldPath);
                 }
 
                 $file = $request->file('foto_wisata');
                 $filename = time() . '-' . Str::random(10) . '.' . $file->getClientOriginalExtension();
-                $path = $file->storeAs('public/wisatas', $filename);
-                $data['foto_wisata'] = Storage::url($path);
+                $file->storeAs('public/wisatas', $filename);
+
+                $data['foto_wisata'] = '/storage/wisatas/' . $filename;
             }
 
             $wisata->update($data);
+            $wisata->harga_dcoin = round($wisata->biaya_wisata / 1000);
 
             return response()->json([
                 'status' => 1,
@@ -127,6 +158,7 @@ class WisataController extends Controller
         }
     }
 
+    // Hapus wisata
     public function destroy($id)
     {
         $wisata = Wisata::find($id);
@@ -136,9 +168,9 @@ class WisataController extends Controller
         }
 
         try {
-            if ($wisata->foto_wisata && strpos($wisata->foto_wisata, '/storage/') !== false) {
-                $relativePath = str_replace('/storage/', 'public/', $wisata->foto_wisata);
-                Storage::delete($relativePath);
+            if ($wisata->foto_wisata) {
+                $relative = str_replace('/storage/', 'public/', $wisata->foto_wisata);
+                Storage::delete($relative);
             }
 
             $wisata->delete();

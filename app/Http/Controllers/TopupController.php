@@ -72,42 +72,41 @@ class TopupController extends Controller
         ];
     }
 
-    public function update(Request $request, Topup $topup)
-    {
-        $request->validate([
-            'id_user' => 'required|numeric',
-            'name' => 'required|max:20',
-            // 'email' => 'required|email|unique:topups,email,' . $topup->id_topup . ',id_topup',
-            // 'no_telpon' => 'required|max:20|unique:topups,no_telpon,' . $topup->id_topup . ',id_topup',
-            'role' => 'required|in:admin,user,umkm,driver',
-            // 'saldo_rupiah' => 'nullable|numeric',
-            // 'saldo_emas' => 'nullable|numeric',
-            'saldo_dcoin' => 'nullable|numeric',
-            'pajak' => 'required',
-            'admin' => 'required',
-            'metode_pembayaran' => 'required',
-        ]);
+   public function update(Request $request, Topup $topup)
+{
+    $request->validate([
+        'id_user' => 'required|numeric',
+        'name' => 'required|max:20',
+        'role' => 'required|in:admin,user,umkm,driver',
+        'saldo_dcoin' => 'nullable|numeric',
+        'pajak' => 'required',
+        'admin' => 'required',
+        'metode_pembayaran' => 'required',
+        'status_bayar' => 'required|in:sudah,belum', // tambahkan validasi ini
+    ]);
 
-        $topup->update([
-            'id_user' => $request->id_user,
-            'name' => $request->name,
-            'email' => $request->email,
-            'no_telpon' => $request->no_telpon,
-            'role' => $request->role,
-            'saldo_rupiah' => $request->saldo_rupiah,
-            'saldo_emas' => $request->saldo_emas,
-            'saldo_dcoin' => $request->saldo_dcoin,
-            'pajak' => $request->pajak,
-            'admin' => $request->admin,
-            'metode_pembayaran' => $request->metode_pembayaran,
-        ]);
+    $topup->update([
+        'id_user' => $request->id_user,
+        'name' => $request->name,
+        'email' => $request->email,
+        'no_telpon' => $request->no_telpon,
+        'role' => $request->role,
+        'saldo_rupiah' => $request->saldo_rupiah,
+        'saldo_emas' => $request->saldo_emas,
+        'saldo_dcoin' => $request->saldo_dcoin,
+        'pajak' => $request->pajak,
+        'admin' => $request->admin,
+        'metode_pembayaran' => $request->metode_pembayaran,
+        'status_bayar' => $request->status_bayar, // WAJIB ADA
+    ]);
 
-        return [
-            "status" => 1,
-            "data" => $topup,
-            "msg" => "Topup updated successfully"
-        ];
-    }
+    return [
+        "status" => 1,
+        "data" => $topup,
+        "msg" => "Topup updated successfully"
+    ];
+}
+
 
     public function destroy(Topup $topup)
     {

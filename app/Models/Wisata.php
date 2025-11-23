@@ -8,40 +8,12 @@ use Illuminate\Database\Eloquent\Model;
 class Wisata extends Model
 {
     use HasFactory;
-
-    /**
-     * Nama tabel yang digunakan oleh model.
-     * @var string
-     */
+    
     protected $table = 'wisatas';
-
-    /**
-     * Kolom kunci utama di tabel.
-     * @var string
-     */
     protected $primaryKey = 'id_wisata';
-
-    /**
-     * Tipe data kunci utama (optional, tapi baik untuk kejelasan).
-     * @var string
-     */
-    protected $keyType = 'int';
-
-    /**
-     * Menentukan bahwa kolom kunci utama adalah auto-incrementing.
-     * @var bool
-     */
-    public $incrementing = true;
-
-    /**
-     * Kolom yang dapat diisi secara massal (mass assignable).
-     * Tambahkan 'id_user' dan 'nama_user' (walaupun 'nama_user' mungkin sebaiknya diambil dari relasi User,
-     * tapi disesuaikan dengan kebutuhan form Anda).
-     * @var array
-     */
+    
     protected $fillable = [
-        'id_user',
-        'nama_user', // Disimpan untuk kemudahan akses di admin panel (asumsi sementara)
+        'nama_user',
         'nama',
         'kategori',
         'alamat_wisata',
@@ -50,18 +22,18 @@ class Wisata extends Model
         'biaya_wisata',
         'lokasi',
     ];
-
-    /**
-     * Kolom yang harus di-casting ke tipe data tertentu.
-     * @var array
-     */
-    protected $casts = [
-        'biaya_wisata' => 'integer',
-    ];
-
-    // Opsional: Relasi ke model User (jika ada)
-    // public function user()
-    // {
-    //     return $this->belongsTo(User::class, 'id_user', 'id');
-    // }
+    
+    // Tambahkan atribut virtual untuk harga_dcoin
+    protected $appends = ['harga_dcoin'];
+    
+    public function getHargaDcoinAttribute()
+    {
+        // Konversi 1000 rupiah = 1 dcoin
+        return round($this->biaya_wisata / 1000);
+    }
+    
+    public function tikets()
+    {
+        return $this->hasMany(TiketWisata::class, 'id_wisata');
+    }
 }
